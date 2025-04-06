@@ -1,6 +1,5 @@
 package app.aaps.plugins.sync.openhumans
 
-import app.aaps.core.interfaces.db.PersistenceLayer
 import app.aaps.plugins.sync.openhumans.delegates.OHAppIDDelegate
 import app.aaps.plugins.sync.openhumans.delegates.OHCounterDelegate
 import app.aaps.plugins.sync.openhumans.delegates.OHStateDelegate
@@ -12,7 +11,6 @@ import org.mockito.Mock
 
 class OpenHumansUploaderPluginTest : TestBaseWithProfile() {
 
-    @Mock lateinit var persistenceLayer: PersistenceLayer
     @Mock lateinit var openHumansAPI: OpenHumansAPI
 
     private lateinit var openHumansUploaderPlugin: OpenHumansUploaderPlugin

@@ -17,7 +17,6 @@ open class TriggerTestBase : TestBaseWithProfile() {
     @Mock lateinit var autosensDataStore: AutosensDataStore
     @Mock lateinit var automationPlugin: AutomationPlugin
     @Mock lateinit var receiverStatusStore: ReceiverStatusStore
-    @Mock lateinit var persistenceLayer: PersistenceLayer
 
     @BeforeEach
     fun prepareMock1() {

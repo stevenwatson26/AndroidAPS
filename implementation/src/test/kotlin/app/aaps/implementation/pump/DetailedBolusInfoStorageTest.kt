@@ -33,7 +33,7 @@ class DetailedBolusInfoStorageTest : TestBase() {
 
     @BeforeEach
     fun prepare() {
-        Mockito.`when`(preferences.get(StringNonKey.BolusInfoStorage)).thenReturn("")
+        Mockito.preferences.put(StringNonKey.BolusInfoStorage)).thenReturn("")
         detailedBolusInfoStorage = DetailedBolusInfoStorageImpl(aapsLogger, preferences, rh)
     }
 

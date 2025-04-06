@@ -28,7 +28,7 @@ class InsulinOrefFreePeakPluginTest : TestBaseWithProfile() {
 
     @Test
     fun `simple peak test`() {
-        `when`(preferences.get(IntKey.InsulinOrefPeak)).thenReturn(90)
+        preferences.put(IntKey.InsulinOrefPeak,90)
         assertThat(sut.peak).isEqualTo(90)
     }
 
@@ -39,7 +39,7 @@ class InsulinOrefFreePeakPluginTest : TestBaseWithProfile() {
 
     @Test
     fun commentStandardTextTest() {
-        `when`(preferences.get(IntKey.InsulinOrefPeak)).thenReturn(90)
+        preferences.put(IntKey.InsulinOrefPeak, 90)
         `when`(rh.gs(eq(R.string.insulin_peak_time))).thenReturn("Peak Time [min]")
         assertThat(sut.commentStandardText()).isEqualTo("Peak Time [min]: 90")
     }

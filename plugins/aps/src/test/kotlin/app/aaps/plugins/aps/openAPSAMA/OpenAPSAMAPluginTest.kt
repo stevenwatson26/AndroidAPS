@@ -1,7 +1,6 @@
 package app.aaps.plugins.aps.openAPSAMA
 
 import app.aaps.core.interfaces.constraints.ConstraintsChecker
-import app.aaps.core.interfaces.db.PersistenceLayer
 import app.aaps.core.interfaces.iob.GlucoseStatusProvider
 import app.aaps.shared.tests.TestBaseWithProfile
 import com.google.common.truth.Truth.assertThat
@@ -12,7 +11,6 @@ import org.mockito.Mock
 class OpenAPSAMAPluginTest : TestBaseWithProfile() {
 
     @Mock lateinit var constraintChecker: ConstraintsChecker
-    @Mock lateinit var persistenceLayer: PersistenceLayer
     @Mock lateinit var glucoseStatusProvider: GlucoseStatusProvider
     @Mock lateinit var determineBasalAMA: DetermineBasalAMA
     private lateinit var openAPSAMAPlugin: OpenAPSAMAPlugin

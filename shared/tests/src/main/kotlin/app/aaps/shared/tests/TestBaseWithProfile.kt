@@ -8,6 +8,7 @@ import app.aaps.core.data.model.GlucoseUnit
 import app.aaps.core.data.model.ICfg
 import app.aaps.core.interfaces.configuration.Config
 import app.aaps.core.interfaces.constraints.ConstraintsChecker
+import app.aaps.core.interfaces.db.PersistenceLayer
 import app.aaps.core.interfaces.db.ProcessedTbrEbData
 import app.aaps.core.interfaces.iob.IobCobCalculator
 import app.aaps.core.interfaces.objects.Instantiator
@@ -38,7 +39,9 @@ import app.aaps.core.validators.preferences.AdaptiveUnitPreference
 import app.aaps.implementation.instantiator.InstantiatorImpl
 import app.aaps.implementation.profile.ProfileStoreObject
 import app.aaps.implementation.profile.ProfileUtilImpl
+import app.aaps.implementation.sharedPreferences.PreferencesImpl
 import app.aaps.implementation.utils.DecimalFormatterImpl
+import app.aaps.shared.impl.sharedPreferences.SPImpl
 import app.aaps.shared.impl.utils.DateUtilImpl
 import dagger.android.AndroidInjector
 import dagger.android.DaggerApplication
@@ -64,16 +67,17 @@ open class TestBaseWithProfile : TestBase() {
     @Mock lateinit var profileFunction: ProfileFunction
     @Mock lateinit var config: Config
     @Mock lateinit var context: DaggerApplication
-    @Mock lateinit var preferences: Preferences
     @Mock lateinit var constraintsChecker: ConstraintsChecker
     @Mock lateinit var theme: Resources.Theme
     @Mock lateinit var typedArray: TypedArray
+    @Mock lateinit var persistenceLayer: PersistenceLayer
 
     lateinit var dateUtil: DateUtil
     lateinit var profileUtil: ProfileUtil
     lateinit var decimalFormatter: DecimalFormatter
     lateinit var hardLimits: HardLimits
     lateinit var instantiator: Instantiator
+    lateinit var preferences: Preferences
 
     private val injectors = mutableListOf<(Any) -> Unit>()
     fun addInjector(fn: (Any) -> Unit) {
@@ -150,15 +154,17 @@ open class TestBaseWithProfile : TestBase() {
         preferenceManager = PreferenceManager(context)
         dateUtil = Mockito.spy(DateUtilImpl(context))
         decimalFormatter = DecimalFormatterImpl(rh)
-        profileUtil = ProfileUtilImpl(preferences, decimalFormatter)
         testPumpPlugin = TestPumpPlugin(rh)
+        val sp = SPImpl(SharedPreferencesMock(), context)
+        preferences = PreferencesImpl(sp, { profileUtil }, { profileFunction }, { hardLimits }, persistenceLayer, config, dateUtil)
+        profileUtil = ProfileUtilImpl(preferences, decimalFormatter)
         Mockito.`when`(context.applicationContext).thenReturn(context)
         Mockito.`when`(context.androidInjector()).thenReturn(injector.androidInjector())
         Mockito.`when`(context.theme).thenReturn(theme)
         Mockito.`when`(context.obtainStyledAttributes(anyObject(), any(), any(), any())).thenReturn(typedArray)
         Mockito.`when`(dateUtil.now()).thenReturn(now)
         Mockito.`when`(activePlugin.activePump).thenReturn(testPumpPlugin)
-        Mockito.`when`(preferences.get(StringKey.GeneralUnits)).thenReturn(GlucoseUnit.MGDL.asText)
+        preferences.put(StringKey.GeneralUnits, GlucoseUnit.MMOL.asText)
         hardLimits = HardLimitsMock(preferences, rh)
         validProfile = ProfileSealed.Pure(pureProfileFromJson(JSONObject(validProfileJSON), dateUtil)!!, activePlugin)
         effectiveProfileSwitch = EPS(

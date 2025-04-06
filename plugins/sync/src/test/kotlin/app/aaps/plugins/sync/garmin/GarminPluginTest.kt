@@ -76,10 +76,7 @@ class GarminPluginTest : TestBaseWithProfile() {
         gp = GarminPlugin(aapsLogger, rh, preferences, context, loopHub, rxBus)
         gp.clock = clock
         `when`(loopHub.currentProfileName).thenReturn("Default")
-        `when`(preferences.get(GarminIntKey.LocalHttpPort)).thenReturn(28890)
-        `when`(preferences.get(any<IntNonKey>())).thenAnswer { i -> 0 }
-        `when`(preferences.get(any<BooleanNonKey>())).thenAnswer { i -> false }
-        `when`(preferences.get(any<StringNonKey>())).thenAnswer { i -> "" }
+        preferences.put(GarminIntKey.LocalHttpPort, 28890)
     }
 
     @AfterEach
@@ -176,22 +173,22 @@ class GarminPluginTest : TestBaseWithProfile() {
 
     @Test
     fun setupHttpServer_enabled() {
-        `when`(preferences.get(GarminStringKey.RequestKey)).thenReturn("")
-        `when`(preferences.get(GarminBooleanKey.LocalHttpServer)).thenReturn(true)
-        `when`(preferences.get(GarminIntKey.LocalHttpPort)).thenReturn(28892)
+        preferences.put(GarminStringKey.RequestKey, "")
+        preferences.put(GarminBooleanKey.LocalHttpServer, true)
+        preferences.put(GarminIntKey.LocalHttpPort, 28892)
         gp.setupHttpServer(Duration.ofSeconds(10))
         val reqUri = URI("http://127.0.0.1:28892/get")
         val resp = reqUri.toURL().openConnection() as HttpURLConnection
         assertEquals(200, resp.responseCode)
 
         // Change port
-        `when`(preferences.get(GarminIntKey.LocalHttpPort)).thenReturn(28893)
+        preferences.put(GarminIntKey.LocalHttpPort, 28893)
         gp.setupHttpServer(Duration.ofSeconds(10))
         val reqUri2 = URI("http://127.0.0.1:28893/get")
         val resp2 = reqUri2.toURL().openConnection() as HttpURLConnection
         assertEquals(200, resp2.responseCode)
 
-        `when`(preferences.get(GarminBooleanKey.LocalHttpServer)).thenReturn(false)
+        preferences.put(GarminBooleanKey.LocalHttpServer, false)
         gp.setupHttpServer(Duration.ofSeconds(10))
         assertThrows(ConnectException::class.java) {
             (reqUri2.toURL().openConnection() as HttpURLConnection).responseCode
@@ -218,7 +215,7 @@ class GarminPluginTest : TestBaseWithProfile() {
 
     @Test
     fun requestHandler_NoKey() {
-        `when`(preferences.get(GarminStringKey.RequestKey)).thenReturn("")
+        preferences.put(GarminStringKey.RequestKey, "")
         val uri = createUri(emptyMap())
         val handler = gp.requestHandler { u: URI -> assertEquals(uri, u); "OK" }
         assertEquals(
@@ -229,7 +226,7 @@ class GarminPluginTest : TestBaseWithProfile() {
 
     @Test
     fun requestHandler_KeyProvided() {
-        `when`(preferences.get(GarminStringKey.RequestKey)).thenReturn("")
+        preferences.put(GarminStringKey.RequestKey, "")
         val uri = createUri(mapOf("key" to "foo"))
         val handler = gp.requestHandler { u: URI -> assertEquals(uri, u); "OK" }
         assertEquals(
@@ -240,7 +237,7 @@ class GarminPluginTest : TestBaseWithProfile() {
 
     @Test
     fun requestHandler_KeyRequiredAndProvided() {
-        `when`(preferences.get(GarminStringKey.RequestKey)).thenReturn("foo")
+        preferences.put(GarminStringKey.RequestKey, "foo")
         val uri = createUri(mapOf("key" to "foo"))
         val handler = gp.requestHandler { u: URI -> assertEquals(uri, u); "OK" }
         assertEquals(
@@ -254,7 +251,7 @@ class GarminPluginTest : TestBaseWithProfile() {
     fun requestHandler_KeyRequired() {
         gp.garminMessengerField = mock(GarminMessenger::class.java)
 
-        `when`(preferences.get(GarminStringKey.RequestKey)).thenReturn("foo")
+        preferences.put(GarminStringKey.RequestKey, "foo")
         val uri = createUri(emptyMap())
         val handler = gp.requestHandler { u: URI -> assertEquals(uri, u); "OK" }
         assertEquals(
@@ -285,7 +282,7 @@ class GarminPluginTest : TestBaseWithProfile() {
     @Test
     fun onConnectDevice() {
         gp.garminMessengerField = mock(GarminMessenger::class.java)
-        `when`(preferences.get(GarminStringKey.RequestKey)).thenReturn("foo")
+        preferences.put(GarminStringKey.RequestKey, "foo")
         val device = GarminDevice(mock(), 1, "Edge")
         gp.onConnectDevice(device)
 

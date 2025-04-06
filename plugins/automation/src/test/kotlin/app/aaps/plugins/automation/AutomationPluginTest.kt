@@ -15,7 +15,6 @@ import org.mockito.Mock
 class AutomationPluginTest : TestBaseWithProfile() {
 
     @Mock lateinit var constraintChecker: ConstraintsChecker
-    @Mock lateinit var persistenceLayer: PersistenceLayer
     @Mock lateinit var loop: Loop
     @Mock lateinit var locationServiceHelper: LocationServiceHelper
     @Mock lateinit var timerUtil: TimerUtil

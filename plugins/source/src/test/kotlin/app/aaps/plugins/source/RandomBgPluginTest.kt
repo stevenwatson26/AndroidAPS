@@ -11,7 +11,6 @@ import org.mockito.Mock
 
 class RandomBgPluginTest : TestBaseWithProfile() {
 
-    @Mock lateinit var persistenceLayer: PersistenceLayer
     @Mock lateinit var virtualPump: VirtualPump
 
     private lateinit var randomBgPlugin: RandomBgPlugin

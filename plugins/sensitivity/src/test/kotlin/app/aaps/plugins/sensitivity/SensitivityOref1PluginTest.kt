@@ -11,8 +11,6 @@ import org.mockito.Mock
 
 class SensitivityOref1PluginTest : TestBaseWithProfile() {
 
-    @Mock lateinit var persistenceLayer: PersistenceLayer
-
     private lateinit var sensitivityOref1Plugin: SensitivityOref1Plugin
 
     @BeforeEach fun prepare() {

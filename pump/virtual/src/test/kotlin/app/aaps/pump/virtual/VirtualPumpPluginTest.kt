@@ -18,7 +18,6 @@ class VirtualPumpPluginTest : TestBaseWithProfile() {
     @Mock lateinit var commandQueue: CommandQueue
     @Mock lateinit var pumpSync: PumpSync
     @Mock lateinit var processedDeviceStatusData: ProcessedDeviceStatusData
-    @Mock lateinit var persistenceLayer: PersistenceLayer
 
     private lateinit var virtualPumpPlugin: VirtualPumpPlugin
 
@@ -32,16 +31,16 @@ class VirtualPumpPluginTest : TestBaseWithProfile() {
 
     @Test
     fun refreshConfiguration() {
-        `when`(preferences.get(StringKey.VirtualPumpType)).thenReturn("Accu-Chek Combo")
+        preferences.put(StringKey.VirtualPumpType, "Accu-Chek Combo")
         virtualPumpPlugin.refreshConfiguration()
         assertThat(virtualPumpPlugin.pumpType).isEqualTo(PumpType.ACCU_CHEK_COMBO)
     }
 
     @Test
     fun refreshConfigurationTwice() {
-        `when`(preferences.get(StringKey.VirtualPumpType)).thenReturn("Accu-Chek Combo")
+        preferences.put(StringKey.VirtualPumpType, "Accu-Chek Combo")
         virtualPumpPlugin.refreshConfiguration()
-        `when`(preferences.get(StringKey.VirtualPumpType)).thenReturn("Accu-Chek Combo")
+        preferences.put(StringKey.VirtualPumpType, "Accu-Chek Combo")
         virtualPumpPlugin.refreshConfiguration()
         assertThat(virtualPumpPlugin.pumpType).isEqualTo(PumpType.ACCU_CHEK_COMBO)
     }

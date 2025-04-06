@@ -19,6 +19,8 @@ dependencies {
     implementation(project(":core:interfaces"))
     implementation(project(":core:keys"))
 
+    testImplementation(project(":shared:tests"))
+
     //Logger
     api(libs.org.slf4j.api)
     api(libs.com.github.tony19.logback.android)

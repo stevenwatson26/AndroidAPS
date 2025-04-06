@@ -120,7 +120,7 @@ internal class LoadBgWorkerTest : TestBase() {
     fun notEnabledNSClientSource() = runTest(timeout = 30.seconds) {
         sut = TestListenableWorkerBuilder<LoadBgWorker>(context).build()
         Mockito.`when`(nsClientSource.isEnabled()).thenReturn(false)
-        Mockito.`when`(preferences.get(BooleanKey.NsClientAcceptCgmData)).thenReturn(false)
+        preferences.put(BooleanKey.NsClientAcceptCgmData, false)
 
         val result = sut.doWorkAndLog()
         assertIs<ListenableWorker.Result.Success>(result)

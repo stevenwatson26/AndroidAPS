@@ -7,7 +7,6 @@ import app.aaps.core.data.model.SourceSensor
 import app.aaps.core.data.model.TrendArrow
 import app.aaps.core.data.time.T
 import app.aaps.core.interfaces.aps.AutosensDataStore
-import app.aaps.core.interfaces.db.PersistenceLayer
 import app.aaps.core.keys.UnitDoubleKey
 import app.aaps.shared.tests.TestBaseWithProfile
 import com.google.common.truth.Truth.assertThat
@@ -18,7 +17,6 @@ import org.mockito.Mockito
 
 class LastBgDataImplTest : TestBaseWithProfile() {
 
-    @Mock lateinit var persistenceLayer: PersistenceLayer
     @Mock lateinit var autosensDataStore: AutosensDataStore
 
     private lateinit var sut: LastBgDataImpl
@@ -31,8 +29,8 @@ class LastBgDataImplTest : TestBaseWithProfile() {
     fun setup() {
         Mockito.`when`(iobCobCalculator.ads).thenReturn(autosensDataStore)
         sut = LastBgDataImpl(rh, dateUtil, persistenceLayer, profileFunction, preferences, iobCobCalculator)
-        Mockito.`when`(preferences.get(UnitDoubleKey.OverviewLowMark)).thenReturn(80.0)
-        Mockito.`when`(preferences.get(UnitDoubleKey.OverviewHighMark)).thenReturn(180.0)
+        preferences.put(UnitDoubleKey.OverviewLowMark, 80.0)
+        preferences.put(UnitDoubleKey.OverviewHighMark, 180.0)
         Mockito.`when`(profileFunction.getUnits()).thenReturn(GlucoseUnit.MGDL)
     }
 

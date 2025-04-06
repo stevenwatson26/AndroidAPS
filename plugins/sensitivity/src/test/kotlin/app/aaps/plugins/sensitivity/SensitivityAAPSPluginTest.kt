@@ -11,7 +11,6 @@ import org.mockito.Mock
 
 class SensitivityAAPSPluginTest : TestBaseWithProfile() {
 
-    @Mock lateinit var persistenceLayer: PersistenceLayer
 
     private lateinit var sensitivityAAPSPlugin: SensitivityAAPSPlugin
 

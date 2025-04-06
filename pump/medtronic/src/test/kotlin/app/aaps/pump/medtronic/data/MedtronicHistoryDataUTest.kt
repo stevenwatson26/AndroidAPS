@@ -116,7 +116,7 @@ class MedtronicHistoryDataUTest : MedtronicTestBase() {
 
         val glucoseMgdl = 175
 
-        `when`(preferences.get(StringKey.GeneralUnits)).thenReturn(GlucoseUnit.MGDL.asText)
+        preferences.put(StringKey.GeneralUnits, GlucoseUnit.MGDL.asText)
 
         val bgRecord = PumpHistoryEntry()
         bgRecord.setEntryType(medtronicUtil.medtronicPumpModel, PumpHistoryEntryType.BGReceived)
@@ -143,7 +143,7 @@ class MedtronicHistoryDataUTest : MedtronicTestBase() {
         val glucoseMgdl = 180
         val glucoseMmol = 10.0
 
-        `when`(preferences.get(StringKey.GeneralUnits)).thenReturn(GlucoseUnit.MMOL.asText)
+        preferences.put(StringKey.GeneralUnits, GlucoseUnit.MMOL.asText)
 
         val bgRecord = PumpHistoryEntry()
         bgRecord.setEntryType(medtronicUtil.medtronicPumpModel, PumpHistoryEntryType.BGReceived)

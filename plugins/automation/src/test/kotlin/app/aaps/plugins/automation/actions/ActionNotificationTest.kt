@@ -17,8 +17,6 @@ import org.skyscreamer.jsonassert.JSONAssert
 
 class ActionNotificationTest : TestBaseWithProfile() {
 
-    @Mock lateinit var persistenceLayer: PersistenceLayer
-
     private lateinit var sut: ActionNotification
 
     init {

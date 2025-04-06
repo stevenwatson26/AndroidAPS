@@ -17,11 +17,11 @@ class ExportPasswordDataStoreImplTest : TestBaseWithProfile() {
     @Test
     fun exportPasswordStoreEnabled() {
         // When disabled
-        `when`(preferences.get(BooleanKey.MaintenanceEnableExportSettingsAutomation)).thenReturn(false)
+        preferences.put(BooleanKey.MaintenanceEnableExportSettingsAutomation, false)
         assertFalse(sut.exportPasswordStoreEnabled())
 
         // When enabled
-        `when`(preferences.get(BooleanKey.MaintenanceEnableExportSettingsAutomation)).thenReturn(true)
+        preferences.put(BooleanKey.MaintenanceEnableExportSettingsAutomation, true)
         assertTrue(sut.exportPasswordStoreEnabled())
         assertTrue(sut.clearPasswordDataStore(context).isEmpty())
 
@@ -32,19 +32,19 @@ class ExportPasswordDataStoreImplTest : TestBaseWithProfile() {
 
     @Test
     fun clearPasswordDataStore() {
-        `when`(preferences.get(BooleanKey.MaintenanceEnableExportSettingsAutomation)).thenReturn(false)
+        preferences.put(BooleanKey.MaintenanceEnableExportSettingsAutomation, false)
         assertTrue(sut.clearPasswordDataStore(context).isEmpty())
     }
 
     @Test
     fun putPasswordToDataStore() {
-        `when`(preferences.get(BooleanKey.MaintenanceEnableExportSettingsAutomation)).thenReturn(false)
+        preferences.put(BooleanKey.MaintenanceEnableExportSettingsAutomation, false)
         assertTrue(sut.putPasswordToDataStore(context, somePassword) == somePassword)
     }
 
     @Test
     fun getPasswordFromDataStore() {
-        `when`(preferences.get(BooleanKey.MaintenanceEnableExportSettingsAutomation)).thenReturn(false)
+        preferences.put(BooleanKey.MaintenanceEnableExportSettingsAutomation, false)
         assertTrue(sut.getPasswordFromDataStore(context) == Triple("", true, true))
     }
 }

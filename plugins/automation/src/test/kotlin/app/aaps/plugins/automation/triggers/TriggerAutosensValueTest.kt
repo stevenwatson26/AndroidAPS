@@ -13,8 +13,8 @@ import org.skyscreamer.jsonassert.JSONAssert
 class TriggerAutosensValueTest : TriggerTestBase() {
 
     @Test fun shouldRunTest() {
-        `when`(preferences.get(DoubleKey.AutosensMax)).thenReturn(1.2)
-        `when`(preferences.get(DoubleKey.AutosensMin)).thenReturn(0.7)
+        preferences.put(DoubleKey.AutosensMax, 1.2)
+        preferences.put(DoubleKey.AutosensMin, 0.7)
         `when`(autosensDataStore.getLastAutosensData(anyObject(), anyObject(), anyObject())).thenReturn(generateAutosensData())
         var t = TriggerAutosensValue(injector)
         t.autosens.value = 110.0

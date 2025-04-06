@@ -12,8 +12,6 @@ import org.mockito.Mockito
 
 class SensitivityWeightedAveragePluginTest : TestBaseWithProfile() {
 
-    @Mock lateinit var persistenceLayer: PersistenceLayer
-
     private lateinit var sensitivityWeightedAveragePlugin: SensitivityWeightedAveragePlugin
     private lateinit var sensitivityAAPSPlugin: SensitivityAAPSPlugin
 

@@ -22,7 +22,6 @@ import org.mockito.Mockito.`when`
 class OpenAPSAutoISFPluginTest : TestBaseWithProfile() {
 
     @Mock lateinit var constraintChecker: ConstraintsChecker
-    @Mock lateinit var persistenceLayer: PersistenceLayer
     @Mock lateinit var glucoseStatusProvider: GlucoseStatusProvider
     @Mock lateinit var determineBasalSMB: DetermineBasalAutoISF
     @Mock lateinit var bgQualityCheck: BgQualityCheck
@@ -81,25 +80,25 @@ class OpenAPSAutoISFPluginTest : TestBaseWithProfile() {
 
     @Test
     fun determine_varSMBRatioTest() {
-        `when`(preferences.get(DoubleKey.ApsAutoIsfSmbDeliveryRatio)).thenReturn(0.55)
-        `when`(preferences.get(DoubleKey.ApsAutoIsfSmbDeliveryRatioMin)).thenReturn(0.4)
-        `when`(preferences.get(DoubleKey.ApsAutoIsfSmbDeliveryRatioMax)).thenReturn(0.6)
-        `when`(preferences.get(DoubleKey.ApsAutoIsfSmbDeliveryRatioBgRange)).thenReturn(20.0)
-        //`when`(preferences.get(DoubleKey.ApsAutoIsfSmbMaxRangeExtension)).thenReturn(1.0)
+        preferences.put(DoubleKey.ApsAutoIsfSmbDeliveryRatio, 0.55)
+        preferences.put(DoubleKey.ApsAutoIsfSmbDeliveryRatioMin, 0.4)
+        preferences.put(DoubleKey.ApsAutoIsfSmbDeliveryRatioMax, 0.6)
+        preferences.put(DoubleKey.ApsAutoIsfSmbDeliveryRatioBgRange, 20.0)
+        //preferences.put(DoubleKey.ApsAutoIsfSmbMaxRangeExtension, 1.0)
 
         assertThat(openAPSAutoISFPlugin.determine_varSMBratio(100, 90.0, "fullLoop")).isEqualTo(0.55)
         assertThat(openAPSAutoISFPlugin.determine_varSMBratio(180, 90.0, "fullLoop")).isEqualTo(0.6)
         assertThat(openAPSAutoISFPlugin.determine_varSMBratio(100, 90.0, "enforced")).isEqualTo(0.5)
         assertThat(openAPSAutoISFPlugin.determine_varSMBratio(80, 90.0, "enforced")).isEqualTo(0.4)
         assertThat(openAPSAutoISFPlugin.determine_varSMBratio(180, 90.0, "enforced")).isEqualTo(0.6)
-        `when`(preferences.get(DoubleKey.ApsAutoIsfSmbDeliveryRatioBgRange)).thenReturn(0.0)
+        preferences.put(DoubleKey.ApsAutoIsfSmbDeliveryRatioBgRange, 0.0)
         assertThat(openAPSAutoISFPlugin.determine_varSMBratio(180, 90.0, "enforced")).isEqualTo(0.55)
     }
 
     @Test
     fun interpolateTest() {
-        `when`(preferences.get(DoubleKey.ApsAutoIsfLowBgWeight)).thenReturn(10.0)
-        `when`(preferences.get(DoubleKey.ApsAutoIsfHighBgWeight)).thenReturn(1.0)
+        preferences.put(DoubleKey.ApsAutoIsfLowBgWeight, 10.0)
+        preferences.put(DoubleKey.ApsAutoIsfHighBgWeight, 1.0)
         assertThat(openAPSAutoISFPlugin.interpolate(45.0)).isEqualTo(-5.0)
         assertThat(openAPSAutoISFPlugin.interpolate(55.0)).isEqualTo(-5.0)
         assertThat(openAPSAutoISFPlugin.interpolate(100.0)).isEqualTo(0.0)
@@ -171,7 +170,7 @@ class OpenAPSAutoISFPluginTest : TestBaseWithProfile() {
             profile_percentage = 100
         )
         assertThat(openAPSAutoISFPlugin.loop_smb(false, profile, 11.0, false, 11.1)).isEqualTo("AAPS")
-        `when`(preferences.get(BooleanKey.ApsAutoIsfSmbOnEvenTarget)).thenReturn(true)
+        preferences.put(BooleanKey.ApsAutoIsfSmbOnEvenTarget, true)
         assertThat(openAPSAutoISFPlugin.loop_smb(true, profile, 11.0, false, 11.1)).isEqualTo("fullLoop")
         assertThat(openAPSAutoISFPlugin.loop_smb(true, profile, 11.0, true, 10.1)).isEqualTo("iobTH")
         profile.target_bg = 122.0
@@ -187,7 +186,7 @@ class OpenAPSAutoISFPluginTest : TestBaseWithProfile() {
         assertThat(openAPSAutoISFPlugin.loop_smb(true, profile, 11.0, false, 11.1)).isEqualTo("blocked")
         profile.target_bg = 144.0   //8.0
         assertThat(openAPSAutoISFPlugin.loop_smb(true, profile, 11.0, false, 11.1)).isEqualTo("enforced")
-        `when`(preferences.get(BooleanKey.ApsAutoIsfSmbOnEvenTarget)).thenReturn(false)
+        preferences.put(BooleanKey.ApsAutoIsfSmbOnEvenTarget, false)
         assertThat(openAPSAutoISFPlugin.loop_smb(true, profile, 11.0, false, 11.1)).isEqualTo("AAPS")
     }
 
@@ -262,8 +261,8 @@ class OpenAPSAutoISFPluginTest : TestBaseWithProfile() {
         val glucoseStatus = glucoseStatusProvider.glucoseStatusData!!
         `when`(glucoseStatus.corrSqu).thenReturn(0.4711)
         assertThat(openAPSAutoISFPlugin.autoISF(now, profile)).isEqualTo(47.11)                             // bad parabola
-        `when`(preferences.get(BooleanKey.ApsAutoIsfHighTtRaisesSens)).thenReturn(true)
-        `when`(preferences.get(IntKey.ApsAutoIsfHalfBasalExerciseTarget)).thenReturn(160)
+        preferences.put(BooleanKey.ApsAutoIsfHighTtRaisesSens, true)
+        preferences.put(IntKey.ApsAutoIsfHalfBasalExerciseTarget, 160)
         assertThat(openAPSAutoISFPlugin.autoISF(now, profile)).isEqualTo(47.11 * 2.0)                       // exercise mode w/o AutoISF
         `when`(glucoseStatus.corrSqu).thenReturn(0.95)
         `when`(glucoseStatus.glucose).thenReturn(90.0)
@@ -271,11 +270,11 @@ class OpenAPSAutoISFPluginTest : TestBaseWithProfile() {
         `when`(glucoseStatus.a1).thenReturn(2.0)
         `when`(glucoseStatus.a2).thenReturn(3.0)
         `when`(glucoseStatus.bgAcceleration).thenReturn(2.0 * glucoseStatus.a2)
-        `when`(preferences.get(DoubleKey.ApsAutoIsfBgAccelWeight)).thenReturn(2.0)
+        preferences.put(DoubleKey.ApsAutoIsfBgAccelWeight, 2.0)
         assertThat(openAPSAutoISFPlugin.autoISF(now, profile)).isEqualTo(47.11 * 2.0 * 2.0)                 // acce_ISF + exercise mode
-        `when`(preferences.get(BooleanKey.ApsAutoIsfHighTtRaisesSens)).thenReturn(false)
+        preferences.put(BooleanKey.ApsAutoIsfHighTtRaisesSens, false)
         assertThat(openAPSAutoISFPlugin.autoISF(now, profile)).isEqualTo(47.11 * 2.0)                       // acce_ISF w/o exercise mode
-        `when`(preferences.get(DoubleKey.ApsAutoIsfLowBgWeight)).thenReturn(2.0)
+        preferences.put(DoubleKey.ApsAutoIsfLowBgWeight, 2.0)
         assertThat(openAPSAutoISFPlugin.autoISF(now, profile)).isEqualTo(47.11 * 1.0)                       // bg_ISF strengthened by acce_ISF
 
     }

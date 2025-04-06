@@ -9,6 +9,9 @@ plugins {
 
 android {
     namespace = "app.aaps.shared.tests"
+    defaultConfig {
+        minSdk = Versions.wearMinSdk  // for wear
+    }
 }
 
 dependencies {

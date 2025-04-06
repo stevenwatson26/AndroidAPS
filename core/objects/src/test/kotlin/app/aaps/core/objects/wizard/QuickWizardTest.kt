@@ -49,7 +49,7 @@ class QuickWizardTest : TestBase() {
 
     @BeforeEach
     fun setup() {
-        `when`(preferences.get(StringNonKey.QuickWizard)).thenReturn("[]")
+        preferences.put(StringNonKey.QuickWizard, "[]")
         quickWizard = QuickWizard(preferences, injector)
     }
 

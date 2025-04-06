@@ -57,7 +57,6 @@ class ConstraintsCheckerImplTest : TestBaseWithProfile() {
     @Mock lateinit var temporaryBasalStorage: TemporaryBasalStorage
     @Mock lateinit var glimpPlugin: GlimpPlugin
     @Mock lateinit var profiler: Profiler
-    @Mock lateinit var persistenceLayer: PersistenceLayer
     @Mock lateinit var pumpSync: PumpSync
     @Mock lateinit var insightDatabaseDao: InsightDatabaseDao
     @Mock lateinit var uiInteraction: UiInteraction
@@ -117,10 +116,10 @@ class ConstraintsCheckerImplTest : TestBaseWithProfile() {
         `when`(rh.gs(R.string.objectivenotstarted)).thenReturn("Objective %1\$d not started")
 
         // RS constructor
-        `when`(preferences.get(DanaStringKey.RsName)).thenReturn("")
-        `when`(preferences.get(DanaStringKey.MacAddress)).thenReturn("")
+        preferences.put(DanaStringKey.RsName, "")
+        preferences.put(DanaStringKey.MacAddress, "")
         // R
-        `when`(preferences.get(DanaStringKey.RName)).thenReturn("")
+        preferences.put(DanaStringKey.RName, "")
 
         //SafetyPlugin
         constraintChecker = ConstraintsCheckerImpl(activePlugin, aapsLogger)
@@ -185,13 +184,13 @@ class ConstraintsCheckerImplTest : TestBaseWithProfile() {
     // 2x Safety & Objectives
     @Test
     fun isClosedLoopAllowedTest() {
-        `when`(preferences.get(StringKey.LoopApsMode)).thenReturn(ApsMode.CLOSED.name)
+        preferences.put(StringKey.LoopApsMode, ApsMode.CLOSED.name)
         objectivesPlugin.objectives[Objectives.MAXIOB_ZERO_CL_OBJECTIVE].startedOn = 0
         var c: Constraint<Boolean> = constraintChecker.isClosedLoopAllowed()
         aapsLogger.debug("Reason list: " + c.reasonList.toString())
 //        assertThat(c.reasonList[0].toString()).contains("Closed loop is disabled") // Safety & Objectives
         assertThat(c.value()).isFalse()
-        `when`(preferences.get(StringKey.LoopApsMode)).thenReturn(ApsMode.OPEN.name)
+        preferences.put(StringKey.LoopApsMode, ApsMode.OPEN.name)
         c = constraintChecker.isClosedLoopAllowed()
         assertThat(c.reasonList[0]).contains("Closed loop mode disabled in preferences") // Safety & Objectives
 //        assertThat(c.reasonList).hasThat(3) // 2x Safety & Objectives
@@ -203,7 +202,7 @@ class ConstraintsCheckerImplTest : TestBaseWithProfile() {
     fun isAutosensModeEnabledTest() {
         openAPSSMBPlugin.setPluginEnabled(PluginType.APS, true)
         objectivesPlugin.objectives[Objectives.AUTOSENS_OBJECTIVE].startedOn = 0
-        `when`(preferences.get(BooleanKey.ApsUseAutosens)).thenReturn(false)
+        preferences.put(BooleanKey.ApsUseAutosens, false)
         val c = constraintChecker.isAutosensModeEnabled()
         assertThat(c.reasonList).hasSize(2) // Safety & Objectives
         assertThat(c.mostLimitedReasonList).hasSize(2) // Safety & Objectives
@@ -233,9 +232,9 @@ class ConstraintsCheckerImplTest : TestBaseWithProfile() {
     fun isSMBModeEnabledTest() {
         openAPSSMBPlugin.setPluginEnabled(PluginType.APS, true)
         objectivesPlugin.objectives[Objectives.SMB_OBJECTIVE].startedOn = 0
-        `when`(preferences.get(BooleanKey.ApsUseSmb)).thenReturn(false)
-        `when`(preferences.get(StringKey.LoopApsMode)).thenReturn(ApsMode.OPEN.name)
-//        `when`(constraintChecker.isClosedLoopAllowed()).thenReturn(ConstraintObject(true))
+        preferences.put(BooleanKey.ApsUseSmb, false)
+        preferences.put(StringKey.LoopApsMode, ApsMode.OPEN.name)
+//        `when`(constraintChecker.isClosedLoopAllowed(, ConstraintObject(true))
         val c = constraintChecker.isSMBModeEnabled()
         assertThat(c.reasonList).hasSize(3) // 2x Safety & Objectives
         assertThat(c.mostLimitedReasonList).hasSize(3) // 2x Safety & Objectives
@@ -258,10 +257,10 @@ class ConstraintsCheckerImplTest : TestBaseWithProfile() {
 //        insightPlugin.setStatusResult(result);
 
         // No limit by default
-        `when`(preferences.get(DoubleKey.ApsMaxBasal)).thenReturn(1.0)
-        `when`(preferences.get(DoubleKey.ApsMaxCurrentBasalMultiplier)).thenReturn(4.0)
-        `when`(preferences.get(DoubleKey.ApsMaxDailyMultiplier)).thenReturn(3.0)
-        `when`(preferences.get(StringKey.SafetyAge)).thenReturn("child")
+        preferences.put(DoubleKey.ApsMaxBasal, 1.0)
+        preferences.put(DoubleKey.ApsMaxCurrentBasalMultiplier, 4.0)
+        preferences.put(DoubleKey.ApsMaxDailyMultiplier, 3.0)
+        preferences.put(StringKey.SafetyAge, "child")
 
         // Apply all limits
         val d = constraintChecker.getMaxBasalAllowed(validProfile)
@@ -285,10 +284,10 @@ class ConstraintsCheckerImplTest : TestBaseWithProfile() {
 //        insightPlugin.setStatusResult(result);
 
         // No limit by default
-        `when`(preferences.get(DoubleKey.ApsMaxBasal)).thenReturn(1.0)
-        `when`(preferences.get(DoubleKey.ApsMaxCurrentBasalMultiplier)).thenReturn(4.0)
-        `when`(preferences.get(DoubleKey.ApsMaxDailyMultiplier)).thenReturn(3.0)
-        `when`(preferences.get(StringKey.SafetyAge)).thenReturn("child")
+        preferences.put(DoubleKey.ApsMaxBasal, 1.0)
+        preferences.put(DoubleKey.ApsMaxCurrentBasalMultiplier, 4.0)
+        preferences.put(DoubleKey.ApsMaxDailyMultiplier, 3.0)
+        preferences.put(StringKey.SafetyAge, "child")
 
         // Apply all limits
         val i = constraintChecker.getMaxBasalPercentAllowed(validProfile)
@@ -314,8 +313,8 @@ class ConstraintsCheckerImplTest : TestBaseWithProfile() {
 //        insightPlugin.setStatusResult(result);
 
         // No limit by default
-        `when`(preferences.get(DoubleKey.SafetyMaxBolus)).thenReturn(3.0)
-        `when`(preferences.get(StringKey.SafetyAge)).thenReturn("child")
+        preferences.put(DoubleKey.SafetyMaxBolus, 3.0)
+        preferences.put(StringKey.SafetyAge, "child")
 
         // Apply all limits
         val d = constraintChecker.getMaxBolusAllowed()
@@ -328,7 +327,7 @@ class ConstraintsCheckerImplTest : TestBaseWithProfile() {
     @Test
     fun carbsAmountShouldBeLimited() {
         // No limit by default
-        `when`(preferences.get(IntKey.SafetyMaxCarbs)).thenReturn(48)
+        preferences.put(IntKey.SafetyMaxCarbs, 48)
 
         // Apply all limits
         val i = constraintChecker.getMaxCarbsAllowed()
@@ -341,9 +340,9 @@ class ConstraintsCheckerImplTest : TestBaseWithProfile() {
     @Test
     fun iobAMAShouldBeLimited() {
         // No limit by default
-        `when`(preferences.get(StringKey.LoopApsMode)).thenReturn(ApsMode.CLOSED.name)
-        `when`(preferences.get(DoubleKey.ApsAmaMaxIob)).thenReturn(1.5)
-        `when`(preferences.get(StringKey.SafetyAge)).thenReturn("teenage")
+        preferences.put(StringKey.LoopApsMode, ApsMode.CLOSED.name)
+        preferences.put(DoubleKey.ApsAmaMaxIob, 1.5)
+        preferences.put(StringKey.SafetyAge, "teenage")
         openAPSAMAPlugin.setPluginEnabled(PluginType.APS, true)
         openAPSSMBPlugin.setPluginEnabled(PluginType.APS, false)
 
@@ -357,9 +356,9 @@ class ConstraintsCheckerImplTest : TestBaseWithProfile() {
     @Test
     fun iobSMBShouldBeLimited() {
         // No limit by default
-        `when`(preferences.get(StringKey.LoopApsMode)).thenReturn(ApsMode.CLOSED.name)
-        `when`(preferences.get(DoubleKey.ApsSmbMaxIob)).thenReturn(3.0)
-        `when`(preferences.get(StringKey.SafetyAge)).thenReturn("teenage")
+        preferences.put(StringKey.LoopApsMode, ApsMode.CLOSED.name)
+        preferences.put(DoubleKey.ApsSmbMaxIob, 3.0)
+        preferences.put(StringKey.SafetyAge, "teenage")
         openAPSSMBPlugin.setPluginEnabled(PluginType.APS, true)
         openAPSAMAPlugin.setPluginEnabled(PluginType.APS, false)
 

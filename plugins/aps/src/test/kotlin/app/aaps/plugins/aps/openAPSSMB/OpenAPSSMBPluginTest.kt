@@ -16,7 +16,6 @@ import org.mockito.Mock
 class OpenAPSSMBPluginTest : TestBaseWithProfile() {
 
     @Mock lateinit var constraintChecker: ConstraintsChecker
-    @Mock lateinit var persistenceLayer: PersistenceLayer
     @Mock lateinit var glucoseStatusProvider: GlucoseStatusProvider
     @Mock lateinit var determineBasalSMB: DetermineBasalSMB
     @Mock lateinit var bgQualityCheck: BgQualityCheck

@@ -19,7 +19,7 @@ open class MedtrumTestBase : TestBaseWithProfile() {
 
     @BeforeEach
     fun setup() {
-        Mockito.`when`(preferences.get(MedtrumStringNonKey.ActiveAlarms)).thenReturn("")
+        preferences.put(MedtrumStringNonKey.ActiveAlarms, "")
         medtrumPump = MedtrumPump(aapsLogger, rh, preferences, dateUtil, pumpSync, temporaryBasalStorage)
     }
 }

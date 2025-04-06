@@ -65,7 +65,6 @@ ActionsTestBase : TestBaseWithProfile() {
     @Mock lateinit var smsCommunicator: SmsCommunicator
     @Mock lateinit var loopPlugin: TestLoopPlugin
     @Mock lateinit var uel: UserEntryLogger
-    @Mock lateinit var persistenceLayer: PersistenceLayer
 
     init {
         addInjector {
