@@ -25,6 +25,12 @@ dependencies {
 
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.androidx.work.testing)
+    testImplementation(libs.io.socket.server)
+    testImplementation(libs.io.socket.engine)
+    // testImplementation(libs.io.socket.server.jetty)
+    testImplementation(libs.org.eclipse.jetty.server)
+    testImplementation(libs.org.eclipse.jetty.servlet)
+    testImplementation(libs.jakarta.servlet.api)
 
     testImplementation(project(":shared:tests"))
     testImplementation(project(":implementation"))
